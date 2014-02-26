@@ -2,7 +2,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -34,6 +39,10 @@ public class Iterate {
 		saveDocument(document, "src/output.xml");
 	}
 
+	
+	
+
+	
 	private static void saveDocument(Document document, String filename) throws FileNotFoundException, TransformerException {
 		final TransformerFactory factory = TransformerFactory.newInstance();
 		factory.setAttribute("indent-number", 2);
@@ -48,40 +57,44 @@ public class Iterate {
 	}
 
 	private static void process(Document document) {
-		final Node root = document.getFirstChild(); 
+		final Node root = document.getFirstChild();
+		final NodeList rootNodes = document.getChildNodes();
 		final NodeList children = root.getChildNodes();
-
+		Element newChild = document.createElement("couint"); 
+		root.appendChild(newChild);
 		
 		for (int i = 0; i < children.getLength(); i++) {
 			final Node item = children.item(i); 
-			Element newChild = document.createElement("count"); 
 			Element wordSubChild = document.createElement("word");
+						
 			if(item.getNodeType() == NODE_TYPE_ELEMENT) {
-				final Element element = (Element) item; 
-			
+				final Element element = (Element) item;
 				String txt = element.getTextContent(); 
 				System.out.println(txt);
-				element.appendChild(newChild);
 				countWords(txt);
 				countLetters(txt);
 				
-				
-						 
+				 List<String> list = Arrays.asList(txt.split(" "));
 				 
-			}
-				
-		}
+			        Set<String> uniqueWords = new HashSet<String>(list);
+			        for (String word : uniqueWords) {
+			            System.out.println(word + ": " + Collections.frequency(list, word));
+
+				        	}   
+			}			
+	  }
 }
+
 	
 	public static void countLetters(String txt){
 		 
 		int SL = txt.length();
-		System.out.println(SL);
+		if(SL > 0) System.out.println(SL);
+		
 	}
 	
 	public static void countWords(String str){
-        if(str == null || str.isEmpty())
-            System.out.println("0");
+
 
         int count = 0;
         for(int e = 0; e < str.length(); e++){
@@ -92,7 +105,8 @@ public class Iterate {
                 }
             }
         }
-        System.out.println(count); 
+        if(count > 0 ) System.out.println(count);
+        
     }
 	
 
@@ -106,4 +120,3 @@ public class Iterate {
 		return builder.parse(new File(filename));
 	}
 }
-
