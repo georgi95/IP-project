@@ -4,7 +4,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,14 +20,12 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 public class Iterate {
-
+	
 	private static final int NODE_TYPE_ELEMENT = 1;
 
 	public static void main(String[] args) throws ParserConfigurationException,
@@ -39,10 +36,7 @@ public class Iterate {
 		saveDocument(document, "src/output.xml");
 	}
 
-	
-	
 
-	
 	private static void saveDocument(Document document, String filename) throws FileNotFoundException, TransformerException {
 		final TransformerFactory factory = TransformerFactory.newInstance();
 		factory.setAttribute("indent-number", 2);
@@ -58,29 +52,30 @@ public class Iterate {
 
 	private static void process(Document document) {
 		final Node root = document.getFirstChild();
-		final NodeList rootNodes = document.getChildNodes();
 		final NodeList children = root.getChildNodes();
-		Element newChild = document.createElement("couint"); 
-		root.appendChild(newChild);
 		
 		for (int i = 0; i < children.getLength(); i++) {
 			final Node item = children.item(i); 
-			Element wordSubChild = document.createElement("word");
 						
 			if(item.getNodeType() == NODE_TYPE_ELEMENT) {
 				final Element element = (Element) item;
 				String txt = element.getTextContent(); 
-				System.out.println(txt);
-				countWords(txt);
-				countLetters(txt);
 				
 				 List<String> list = Arrays.asList(txt.split(" "));
+				 Element countChild = document.createElement("count"); 
+				 root.appendChild(countChild);
 				 
 			        Set<String> uniqueWords = new HashSet<String>(list);
 			        for (String word : uniqueWords) {
-			            System.out.println(word + ": " + Collections.frequency(list, word));
-
-				        	}   
+			            //System.out.println(word + ": " + Collections.frequency(list, word));
+			    		Element newChild = document.createElement("word"); 
+			    		countChild.appendChild(newChild);
+			            newChild.setAttribute("count",Integer.toString(Collections.frequency(list, word)));
+			            newChild.setTextContent(word);
+			            
+				    }  
+			        
+			       break;
 			}			
 	  }
 }
